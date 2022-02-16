@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import MyChart from "./components/MyChart";
 import { useEffect, useState } from "react";
