@@ -21,6 +21,12 @@ ChartJS.register(
   Legend
 );
 
-export default function MyChart(props) {
-  return <Line options={props.options} data={props.data} />;
+export default function LineChart(props) {
+  return (
+    <Line
+      options={props.options}
+      data={props.data}
+      style={{ padding: "50px 0" }}
+    />
+  );
 }
