@@ -26,7 +26,9 @@ export default function LineChart(props) {
     <Line
       options={props.options}
       data={props.data}
-      style={{ padding: "50px 0" }}
+      style={{
+        padding: "50px 0",
+      }}
     />
   );
 }

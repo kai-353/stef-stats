@@ -25,6 +25,7 @@ function App() {
 
   const [trophyChartOptions, setTrophyChartOptions] = useState({
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       title: {
         display: true,
@@ -47,6 +48,7 @@ function App() {
 
   const [gamesTotalChartOptions, setGamesTotalChartOptions] = useState({
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       title: {
         display: true,
@@ -76,6 +78,7 @@ function App() {
 
   const [winsTotalChartOptions, setWinsTotalChartOptions] = useState({
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       title: {
         display: true,
@@ -113,6 +116,7 @@ function App() {
 
   const [daysInArenaChartOptions, setDaysInArenaTotalChartOptions] = useState({
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       title: {
         display: true,
@@ -178,6 +182,7 @@ function App() {
         };
         setTrophyChartOptions({
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             title: {
               display: true,
@@ -225,6 +230,7 @@ function App() {
         };
         setGamesTotalChartOptions({
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             title: {
               display: true,
@@ -275,6 +281,7 @@ function App() {
         };
         setWinsTotalChartOptions({
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             title: {
               display: true,
@@ -321,11 +328,9 @@ function App() {
             },
           ],
         });
-        // suggestedMin: 0,
-        //       stepSize: 1,
-        //       suggestedMax: Math.max(result.map(x => x["arena_days"]) + 2,
         setDaysInArenaTotalChartOptions({
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             title: {
               display: true,
@@ -360,26 +365,34 @@ function App() {
     <div className="App">
       <div className="container">
         <h1>stefstats</h1>
-        <LineChart
-          data={trophyChartData}
-          options={trophyChartOptions}
-          className="chart"
-        />
-        <LineChart
-          data={gamesTotalChartData}
-          options={gamesTotalChartOptions}
-          className="chart"
-        />
-        <LineChart
-          data={winsTotalChartData}
-          options={winsTotalChartOptions}
-          className="chart"
-        />
-        <BarChart
-          data={daysInArenaChartData}
-          options={daysInArenaChartOptions}
-          className="chart"
-        />
+        <div className="chart-container">
+          <LineChart
+            data={trophyChartData}
+            options={trophyChartOptions}
+            className="chart"
+          />
+        </div>
+        <div className="chart-container">
+          <LineChart
+            data={gamesTotalChartData}
+            options={gamesTotalChartOptions}
+            className="chart"
+          />
+        </div>
+        <div className="chart-container">
+          <LineChart
+            data={winsTotalChartData}
+            options={winsTotalChartOptions}
+            className="chart"
+          />
+        </div>
+        <div className="chart-container">
+          <BarChart
+            data={daysInArenaChartData}
+            options={daysInArenaChartOptions}
+            className="chart"
+          />
+        </div>
       </div>
     </div>
   );

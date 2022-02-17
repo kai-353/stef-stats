@@ -15,6 +15,7 @@ h1 {
   margin-left: auto;
 }
 
-.chart {
-  padding: 50px 50px;
+.chart-container {
+  width: 100%;
+  aspect-ratio: 2/1;
 }
