@@ -2,6 +2,7 @@ import "./App.css";
 import LineChart from "./components/LineChart";
 import BarChart from "./components/BarChart";
 import { useEffect, useState } from "react";
+import Select from "react-select";
 
 function App() {
   const [trophyChartData, setTrophyChartData] = useState({
@@ -47,36 +48,6 @@ function App() {
   });
 
   const [gamesTotalChartOptions, setGamesTotalChartOptions] = useState({
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      title: {
-        display: true,
-        text: "Amount of games played",
-      },
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        displayColors: false,
-        callbacks: {},
-      },
-    },
-  });
-
-  const [winsTotalChartData, setWinsTotalChartData] = useState({
-    labels: [],
-    datasets: [
-      {
-        label: "Wins",
-        data: [],
-        borderColor: "rgb(153, 102, 255)",
-        backgroundColor: "rgba(153, 102, 255, 0.5)",
-      },
-    ],
-  });
-
-  const [winsTotalChartOptions, setWinsTotalChartOptions] = useState({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -214,12 +185,49 @@ function App() {
               backgroundColor: "rgba(255, 206, 86, 0.5)",
               fill: true,
             },
+            {
+              label: "Wins",
+              data: result.map((x) => x["total_wins"]),
+              borderColor: "rgb(153, 102, 255)",
+              backgroundColor: "rgba(153, 102, 255, 0.5)",
+              fill: true,
+              hidden: true,
+            },
+            {
+              label: "Losses",
+              data: result.map((x) => x["total_games"] - x["total_wins"]),
+              borderColor: "rgb(153, 102, 255)",
+              backgroundColor: "rgba(153, 102, 255, 0.5)",
+              fill: true,
+              hidden: true,
+            },
           ],
         });
         const gamesTotalToolTip = (toolTipItems) => {
           if (toolTipItems.dataIndex !== 0) {
-            var current_val = result[toolTipItems.dataIndex]["total_games"];
-            var prev_val = result[toolTipItems.dataIndex - 1]["total_games"];
+            var dataset = "total_losses";
+
+            if (toolTipItems.datasetIndex === 0) {
+              dataset = "total_games";
+            } else if (toolTipItems.datasetIndex === 1) {
+              dataset = "total_wins";
+            } else {
+            }
+
+            var current_val = 0;
+            var prev_val = 0;
+
+            if (dataset === "total_losses") {
+              current_val =
+                result[toolTipItems.dataIndex]["total_games"] -
+                result[toolTipItems.dataIndex]["total_wins"];
+              prev_val =
+                result[toolTipItems.dataIndex - 1]["total_games"] -
+                result[toolTipItems.dataIndex - 1]["total_wins"];
+            } else {
+              current_val = result[toolTipItems.dataIndex][dataset];
+              prev_val = result[toolTipItems.dataIndex - 1][dataset];
+            }
 
             var change = current_val - prev_val;
 
@@ -243,57 +251,6 @@ function App() {
               displayColors: false,
               callbacks: {
                 label: gamesTotalToolTip,
-              },
-              titleFont: {
-                size: 14,
-              },
-              bodyFont: {
-                size: 14,
-                family: "sans-serif",
-              },
-            },
-          },
-        });
-
-        setWinsTotalChartData({
-          labels: result.map((x) => x["created_at"]),
-          datasets: [
-            {
-              label: "Wins",
-              data: result.map((x) => x["total_wins"]),
-              borderColor: "rgb(153, 102, 255)",
-              backgroundColor: "rgba(153, 102, 255, 0.5)",
-              fill: true,
-            },
-          ],
-        });
-        const winsTotalToolTip = (toolTipItems) => {
-          if (toolTipItems.dataIndex !== 0) {
-            var current_val = result[toolTipItems.dataIndex]["total_wins"];
-            var prev_val = result[toolTipItems.dataIndex - 1]["total_wins"];
-
-            var change = current_val - prev_val;
-
-            return `${toolTipItems.formattedValue}, +${change}`;
-          } else {
-            return `${toolTipItems.formattedValue}, +0`;
-          }
-        };
-        setWinsTotalChartOptions({
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: {
-              display: true,
-              text: "Amount of games won",
-            },
-            legend: {
-              display: false,
-            },
-            tooltip: {
-              displayColors: false,
-              callbacks: {
-                label: winsTotalToolTip,
               },
               titleFont: {
                 size: 14,
@@ -361,6 +318,40 @@ function App() {
       });
   }, []);
 
+  const handleChange = (selectedOption) => {
+    const mappedOptions = selectedOption.map((x) => x.value);
+    console.log(mappedOptions);
+    setGamesTotalChartData((prevState) => ({
+      labels: prevState.labels,
+      datasets: [
+        {
+          label: "Games",
+          data: prevState.datasets[0].data,
+          borderColor: "rgb(255, 206, 86)",
+          backgroundColor: "rgba(255, 206, 86, 0.5)",
+          fill: true,
+          hidden: mappedOptions.includes("Games") ? false : true,
+        },
+        {
+          label: "Wins",
+          data: prevState.datasets[1].data,
+          borderColor: "rgb(153, 102, 255)",
+          backgroundColor: "rgba(153, 102, 255, 0.5)",
+          fill: true,
+          hidden: mappedOptions.includes("Wins") ? false : true,
+        },
+        {
+          label: "Losses",
+          data: prevState.datasets[2].data,
+          borderColor: "rgb(153, 102, 255)",
+          backgroundColor: "rgba(153, 102, 255, 0.5)",
+          fill: true,
+          hidden: mappedOptions.includes("Losses") ? false : true,
+        },
+      ],
+    }));
+  };
+
   return (
     <div className="App">
       <div className="container">
@@ -372,17 +363,20 @@ function App() {
             className="chart"
           />
         </div>
+        <Select
+          defaultValue={{ value: "Games", label: "Games" }}
+          options={[
+            { value: "Games", label: "Games" },
+            { value: "Wins", label: "Wins" },
+            { value: "Losses", label: "Losses" },
+          ]}
+          onChange={handleChange}
+          isMulti
+        />
         <div className="chart-container">
           <LineChart
             data={gamesTotalChartData}
             options={gamesTotalChartOptions}
-            className="chart"
-          />
-        </div>
-        <div className="chart-container">
-          <LineChart
-            data={winsTotalChartData}
-            options={winsTotalChartOptions}
             className="chart"
           />
         </div>
